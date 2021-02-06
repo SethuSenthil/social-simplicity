@@ -18,7 +18,7 @@ var serviceAccount = JSON.parse(process.env.FIREBASESERVICEKEY);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://r2k-database-default-rtdb.firebaseio.com"
+  databaseURL: process.env.DATABASEURL
 });
 
 var db = admin.database();
