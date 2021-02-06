@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+const Instagram = require('instagram-web-api')
 const express = require('express');
 const bodyParser = require('body-parser');
 const exphbs  = require('express-handlebars');
@@ -8,27 +8,27 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 
-app.use(express.static('.'));
+app.use(express.static(__dirname + '/public'));
 
 const YOUR_DOMAIN = process.env.DOMAIN
 
-var admin = require('firebase-admin');
+// var admin = require('firebase-admin');
 
-var serviceAccount = JSON.parse(process.env.FIREBASESERVICEKEY);
+// var serviceAccount = JSON.parse(process.env.FIREBASESERVICEKEY);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: process.env.DATABASEURL
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: process.env.DATABASEURL
+// });
 
-var db = admin.database();
+// var db = admin.database();
 
 app.get('/', async function (req, res) {
-    res.render('success', { txt: `text`})
+    res.render('login', { txt: `text`})
 })
 
 
-app.post('/test', bodyParser.json(), async (req, res) => {
+app.post('/insta-login', bodyParser.json(), async (req, res) => {
 
 });
 
