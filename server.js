@@ -70,7 +70,7 @@ setInterval(function(){
         let postsToSend=[];
         console.log(accountSnapshot.key)
         try{
-          axios.post('http://localhost:4242/get-posts', {}, {params:{
+          axios.post('https://social-simplicity-21.herokuapp.com//get-posts', {}, {params:{
             uid: accountSnapshot.key
           }}).then(res=>{
             res.data.forEach(async(e)=>{
