@@ -9,7 +9,7 @@ app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 const axios = require('axios')
 //How often the bot checks insta in miliseconds
-let refreshRate=300000
+let refreshRate=10000
 
 app.use(express.static(__dirname + '/public'));
 
@@ -28,7 +28,7 @@ var db = admin.database();
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
-Disc.setPrefix("~")
+Disc.setPrefix("!")
 
 Disc.onReady(()=>{
   console.log(`Logged in as ${Disc.client.user.tag}!`)
@@ -66,11 +66,18 @@ Disc.onMessage([{
     }
   },{
     cmd: "mute",
-    desc: "Prevents notifications from being sent for a speficied ammount of time (in hours)",
+    desc: "Prevents notifications from being sent for a specified ammount of time (in hours)",
     exe: (msg, args, params)=>{
         if(!Number(args[0]))
             return msg.author.send("Enter a number after the command")
+        
     }
+},{
+  cmd: "unmute",
+  desc: "Unmutes yourself.",
+  exe: (msg, args, params)=>{
+    
+  }
 },{
   cmd: "refresh",
   desc: "sets refresh rate in seconds",
@@ -83,11 +90,22 @@ Disc.onMessage([{
   cmd: "get",
   desc: "Get your firebase UID",
   exe: (msg, args, params)=>{
-   
+    var ref = db.ref('accounts');
+    ref.orderByChild('discID').equalTo(''+msg.author.id).on("child_added", function(snapshot) {
+      msg.channel.send(snapshot.key)
+    });
   }
 }
 ])
 
+let getUIDFromToken=()=>{
+  db.ref('accounts').once('value').then((snapshot)=>{
+    snapshot.forEach(accountSnapshot=>{
+      if(accountSnapshot.val().discID===msg.author.id)
+        return accountSnapshot.key
+    })
+  })
+}
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
 //   if(listen)
@@ -100,7 +118,11 @@ Disc.onMessage([{
 //   console.log(lastCheck)
 //   db.ref('accounts').once('value').then((snapshot)=>{
 //     snapshot.forEach(accountSnapshot=>{
-//       let discID=""+accountSnapshot.val().discID;
+//       let discID=""
+//       let mute=accountSnapshot.val().mute
+//       if(accountSnapshot.val().discID)
+//         discID=""+accountSnapshot.val().discID;
+//       if(discID!="")
 //       console.log(discID)
 //       if(accountSnapshot.val().Instagram!=null){
 //         let postsToSend=[];
@@ -113,8 +135,6 @@ Disc.onMessage([{
 //               if(e.timestamp>=lastCheck){
 //                 await postsToSend.push(e)
 //               }//1612696754674
-//               console.log(e)
-//                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
 //             })
 //             lastCheck=Math.floor(Date.now()/1000)
 //             postsToSend.forEach(e=>{
@@ -124,7 +144,8 @@ Disc.onMessage([{
 //                 .setTitle('Update from '+e.handle+"!")
 //                 .setDescription('Caption: '+e.caption)
 //                 .setImage(e.displayUrl)
-//                 Disc.client.users.cache.get(discID).send(embed)
+//                 if(discID!=""&&mute==0)
+//                   Disc.client.users.cache.get(discID).send(embed)
 //               }
 //               catch{
 
@@ -238,8 +259,6 @@ app.get('/get-posts', bodyParser.json(), async (req, res) => {
         for(let handle in following)
             if(following[handle]){
                 const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
-                //console.log(posts.user.edge_owner_to_timeline_media.page_info)
-                //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
                 for(let post of posts.user.edge_owner_to_timeline_media.edges){
                     const displayUrl = post?.node?.display_url
                     const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
@@ -250,9 +269,48 @@ app.get('/get-posts', bodyParser.json(), async (req, res) => {
                 }
             }
         arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
-        //console.log(arr)
         return res.json(arr)
     }).catch(e=>res.json(e))
+});
+
+app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
+  const username = req.query.username
+  const password = req.query.password
+  let verified = false
+  let uid="NONE"
+  db.ref("accounts").orderByChild('Instagram/password').equalTo(''+password).on("child_added", function(snapshot) {
+    verified=true;
+  })
+  db.ref("accounts").orderByChild('Instagram/username').equalTo(''+username).on("child_added", function(snapshot) {
+    if(verified)
+    uid=snapshot.key
+  })
+  if(uid!="NONE"){
+    db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+      const { username, password, following } = snap.val()
+      let client = new Instagram({ username, password });
+      const log = await client.login()
+      console.log(log)
+      if(!log.authenticated)
+          return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
+      const userId = log.userId
+      let arr = []
+      for(let handle in following)
+          if(following[handle]){
+              const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
+              for(let post of posts.user.edge_owner_to_timeline_media.edges){
+                  const displayUrl = post?.node?.display_url
+                  const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
+                  const timestamp = post?.node?.taken_at_timestamp
+                  const video = post?.node?.video_url
+                  const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
+                  arr.push(obj)
+              }
+          }
+      arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
+      return res.json(arr)
+  }).catch(e=>res.json(e))
+  }
 });
 
 const port = process.env.PORT || 4242

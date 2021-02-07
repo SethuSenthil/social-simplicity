@@ -127,7 +127,8 @@
 			const url=new URL(window.location.href);
 			console.log(url.searchParams.get("disc"))
 			await firebase.database().ref('accounts/'+uid).update({
-						discID: url.searchParams.get("disc")
+						discID: url.searchParams.get("disc"),
+						mute: 0
 			});
             window.location = "/profile?first=1&discID="+url.searchParams.get("disc")
         } else {
