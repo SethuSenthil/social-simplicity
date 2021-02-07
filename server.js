@@ -195,7 +195,7 @@ app.get('/following', async function (req, res) {
 })
 const instaClients = {}
 const instaIds = {}
-app.get('/sign-in', bodyParser.json(), async (req, res) => {
+app.post('/sign-in', bodyParser.json(), async (req, res) => {
     //console.log(req.body)
     const username = req.body.username
     const password = req.body.password
