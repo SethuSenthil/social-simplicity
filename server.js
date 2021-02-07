@@ -83,7 +83,7 @@ Disc.onMessage([{
   cmd: "get",
   desc: "Get your firebase UID",
   exe: (msg, args, params)=>{
-
+   
   }
 }
 ])
@@ -93,51 +93,53 @@ Disc.onMessage([{
 //   if(listen)
 //   sendDM(newPost.discID)
 // });
-let lastCheck=Math.floor(Date.now()/1000)
-setInterval(function(){ 
-  console.log(lastCheck)
-  db.ref('accounts').once('value').then((snapshot)=>{
-    snapshot.forEach(accountSnapshot=>{
-      let discID=""+accountSnapshot.val().discID;
-      console.log(discID)
-      if(accountSnapshot.val().Instagram!=null){
-        let postsToSend=[];
-        console.log(accountSnapshot.key)
-        try{
-          axios.get('https://social-simplicity-21.herokuapp.com/get-posts', {params:{
-            uid: accountSnapshot.key
-          }}).then(res=>{
-            res.data.forEach(async(e)=>{
-              if(e.timestamp>=lastCheck){
-                await postsToSend.push(e)
-              }//1612696754674
-              console.log(e)
-                //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
-            })
-            lastCheck=Math.floor(Date.now()/1000)
-            postsToSend.forEach(e=>{
-              try{
-                const embed = new Disc.Discord.MessageEmbed()
-                .setColor('#C70039')
-                .setTitle('Update from '+e.handle+"!")
-                .setDescription('Caption: '+e.caption)
-                .setImage(e.displayUrl)
-                Disc.client.users.cache.get(discID).send(embed)
-              }
-              catch{
 
-              }
-            })
-          })
+
+// let lastCheck=Math.floor(Date.now()/1000)
+// setInterval(function(){ 
+//   console.log(lastCheck)
+//   db.ref('accounts').once('value').then((snapshot)=>{
+//     snapshot.forEach(accountSnapshot=>{
+//       let discID=""+accountSnapshot.val().discID;
+//       console.log(discID)
+//       if(accountSnapshot.val().Instagram!=null){
+//         let postsToSend=[];
+//         console.log(accountSnapshot.key)
+//         try{
+//           axios.get('https://social-simplicity-21.herokuapp.com/get-posts', {params:{
+//             uid: accountSnapshot.key
+//           }}).then(res=>{
+//             res.data.forEach(async(e)=>{
+//               if(e.timestamp>=lastCheck){
+//                 await postsToSend.push(e)
+//               }//1612696754674
+//               console.log(e)
+//                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
+//             })
+//             lastCheck=Math.floor(Date.now()/1000)
+//             postsToSend.forEach(e=>{
+//               try{
+//                 const embed = new Disc.Discord.MessageEmbed()
+//                 .setColor('#C70039')
+//                 .setTitle('Update from '+e.handle+"!")
+//                 .setDescription('Caption: '+e.caption)
+//                 .setImage(e.displayUrl)
+//                 Disc.client.users.cache.get(discID).send(embed)
+//               }
+//               catch{
+
+//               }
+//             })
+//           })
           
-        }
-        catch(err){
+//         }
+//         catch(err){
           
-        }
-      }
-    })
-  })
- }, refreshRate)
+//         }
+//       }
+//     })
+//   })
+//  }, refreshRate)
 
 
 let sendDM=(disc)=>{
