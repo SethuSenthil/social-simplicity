@@ -76,7 +76,14 @@ Disc.onMessage([{
   desc: "sets refresh rate in seconds",
   exe: (msg, args, params)=>{
     let seconds = parseInt(args[1])
-    msg.channel.send("Refresh rate set to ")
+    msg.channel.send("Refresh rate set to "+seconds+" seconds!")
+    refresh=seconds
+  }
+},{
+  cmd: "get",
+  desc: "Get your firebase UID",
+  exe: (msg, args, params)={
+
   }
 }
 ])
@@ -97,7 +104,7 @@ setInterval(function(){
         let postsToSend=[];
         console.log(accountSnapshot.key)
         try{
-          axios.get('http://localhost:4242/get-posts', {params:{
+          axios.get('https://social-simplicity-21.herokuapp.com/get-posts', {params:{
             uid: accountSnapshot.key
           }}).then(res=>{
             res.data.forEach(async(e)=>{
