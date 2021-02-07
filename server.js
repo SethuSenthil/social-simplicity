@@ -9,7 +9,7 @@ app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 const axios = require('axios')
 //How often the bot checks insta in miliseconds
-let refreshRate=10000
+let refreshRate=1500000
 
 app.use(express.static(__dirname + '/public'));
 
@@ -118,54 +118,49 @@ let changeMute=(m, id)=>{
 // });
 
 
-// let lastCheck=Math.floor(Date.now()/1000)
-// setInterval(function(){ 
-//   console.log(lastCheck)
-//   db.ref('accounts').once('value').then((snapshot)=>{
-//     snapshot.forEach(accountSnapshot=>{
-//       let discID=""
-//       let mute=accountSnapshot.val().mute
-//       if(accountSnapshot.val().discID)
-//         discID=""+accountSnapshot.val().discID;
-//       if(discID!="")
-//       console.log(discID)
-//       if(accountSnapshot.val().Instagram!=null){
-//         let postsToSend=[];
-//         console.log(accountSnapshot.key)
-//         try{
-//           axios.get('https://social-simplicity-21.herokuapp.com/get-posts', {params:{
-//             uid: accountSnapshot.key
-//           }}).then(res=>{
-//             res.data.forEach(async(e)=>{
-//               if(e.timestamp>=lastCheck){
-//                 await postsToSend.push(e)
-//               }//1612696754674
-//             })
-//             lastCheck=Math.floor(Date.now()/1000)
-//             postsToSend.forEach(e=>{
-//               try{
-//                 const embed = new Disc.Discord.MessageEmbed()
-//                 .setColor('#C70039')
-//                 .setTitle('Update from '+e.handle+"!")
-//                 .setDescription('Caption: '+e.caption)
-//                 .setImage(e.displayUrl)
-//                 if(discID!=""&&mute==0)
-//                   Disc.client.users.cache.get(discID).send(embed)
-//               }
-//               catch{
+let lastCheck=Math.floor(Date.now()/1000)
+setInterval(function(){ 
+  console.log(lastCheck)
+  db.ref('accounts').once('value').then((snapshot)=>{
+    snapshot.forEach(async(accountSnapshot)=>{
+      let discID=""
+      let mute=accountSnapshot.val().mute
+      if(accountSnapshot.val().discID)
+        discID=""+accountSnapshot.val().discID;
+      if(discID!="")
+      console.log(discID)
+      if(accountSnapshot.val().Instagram!=null){
+        let postsToSend=[];
+        console.log(accountSnapshot.key)
+          axios.post('https://social-simplicity-21.herokuapp.com/get-posts-2', [], {params:{
+            uid: accountSnapshot.key
+          }}).then(res=>{
+            res.data.forEach(async(e)=>{
+              if(e.timestamp>=lastCheck){
+                await postsToSend.push(e)
+              }//1612696754674
+            })
+            lastCheck=Math.floor(Date.now()/1000)
+            postsToSend.forEach(e=>{
+              console.log(e)
+              try{
+                const embed = new Disc.Discord.MessageEmbed()
+                .setColor('#C70039')
+                .setTitle('Update from '+e.handle+"!")
+                .setDescription('Caption: '+e.caption)
+                .setImage(e.displayUrl)
+                if(discID!=""&&mute==0)
+                  Disc.client.users.cache.get(discID).send(embed)
+              }
+              catch{
 
-//               }
-//             })
-//           })
-          
-//         }
-//         catch(err){
-          
-//         }
-//       }
-//     })
-//   })
-//  }, refreshRate)
+              }
+            })
+          })
+      }
+    })
+  })
+ }, refreshRate)
 
 
 let sendDM=(disc)=>{
@@ -320,6 +315,34 @@ app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
       return res.send(arr[Math.random()*arr.length].displayUrl)
   }).catch(e=>res.send(e))
   }
+});
+
+app.post('/get-posts-2', bodyParser.json(), async (req, res) => {
+  const uid = req.query.uid
+  db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+      const { username, password, following } = snap.val()
+      let client = new Instagram({ username, password });
+      const log = await client.login()
+      console.log(log)
+      if(!log.authenticated)
+          return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
+      const userId = log.userId
+      let arr = []
+      for(let handle in following)
+          if(following[handle]){
+              const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
+              for(let post of posts.user.edge_owner_to_timeline_media.edges){
+                  const displayUrl = post?.node?.display_url
+                  const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
+                  const timestamp = post?.node?.taken_at_timestamp
+                  const video = post?.node?.video_url
+                  const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
+                  arr.push(obj)
+              }
+          }
+      arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
+      return res.json(arr)
+  }).catch(e=>res.json(e))
 });
 
 const port = process.env.PORT || 4242
