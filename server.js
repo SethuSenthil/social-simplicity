@@ -28,7 +28,7 @@ var db = admin.database();
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
-Disc.setPrefix("!")
+Disc.setPrefix("~")
 
 Disc.onReady(()=>{
   console.log(`Logged in as ${Disc.client.user.tag}!`)
@@ -36,21 +36,47 @@ Disc.onReady(()=>{
 
 Disc.onMessage([{
   cmd: "login",
-  desc: "Logs you in",
+  desc: "Sends you a login link",
   exe: (msg, args, params)=>{
     const embed = new Disc.Discord.MessageEmbed()
     .setColor('#B106C2')
     .setTitle('Social Simplicity: A Solution to Doom Scrolling')
     .setURL('https://social-simplicity-21.herokuapp.com/login?disc='+msg.author.id)
-    .setDescription('Welcome to social simplicity! Some other BS here. Click [here](https://social-simplicity-21.herokuapp.com/login?disc='+msg.author.id+') to get started.')
+    .setDescription('Welcome to social simplicity! We\'ll keep things short and sweet. Click [here](https://social-simplicity-21.herokuapp.com/login?disc='+msg.author.id+') to get started.')
     .addField('Instructions', '1. Click the above link and create an account with social simplicity.\n2. Log in with a social media site you would like to receive updates for.', true)
     .setImage('https://i.imgur.com/PAo4Wat.png')
     .setTimestamp()
-    .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    .setFooter('Social Simplicity', 'https://i.imgur.com/PAo4Wat.png');
     msg.author.send(embed)
     msg.channel.send("Sent you a DM!")
   }
+<<<<<<< HEAD
 }])
+=======
+},{
+    cmd: "about",
+    desc: "Sends you a link to our homepage",
+    exe: (msg, args, params)=>{
+      const embed = new Disc.Discord.MessageEmbed()
+      .setColor('#B106C2')
+      .setTitle('Social Simplicity: A Solution to Doom Scrolling')
+      .setURL('https://social-simplicity-21.herokuapp.com/')
+      .setDescription('Here is the [link](https://social-simplicity-21.herokuapp.com/) to our homepage.')
+      .setThumbnail('https://i.imgur.com/PAo4Wat.png')
+      .setTimestamp()
+      .setFooter('Social Simplicity', 'https://i.imgur.com/PAo4Wat.png');
+      msg.author.send(embed)
+    }
+  },{
+    cmd: "mute",
+    desc: "Prevents notifications from being sent for a speficied ammount of time (in hours)",
+    exe: (msg, args, params)=>{
+        if(!Number(args[0]))
+            return msg.author.send("Enter a number after the command")
+    }
+}
+])
+>>>>>>> 56af23b83f84f30e8b451ed54f9cefcb8863182e
 
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
