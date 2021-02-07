@@ -97,7 +97,7 @@ setInterval(function(){
         let postsToSend=[];
         console.log(accountSnapshot.key)
         try{
-          axios.post('http://localhost:4242/get-posts', {}, {params:{
+          axios.get('http://localhost:4242/get-posts', {params:{
             uid: accountSnapshot.key
           }}).then(res=>{
             res.data.forEach(async(e)=>{
@@ -195,7 +195,7 @@ app.get('/following', async function (req, res) {
 })
 const instaClients = {}
 const instaIds = {}
-app.post('/sign-in', bodyParser.json(), async (req, res) => {
+app.get('/sign-in', bodyParser.json(), async (req, res) => {
     //console.log(req.body)
     const username = req.body.username
     const password = req.body.password
