@@ -64,14 +64,14 @@ Disc.onMessage([{
       msg.author.send(embed)
     }
   },{
-  cmd: "add",
-  desc: "Add users to a whitelist",
-  exe: (msg, args, params)=>{
-    //Do after firebase auth
-    db.ref(msg.author.id+"").child("insta").child("whitelist").push([args[0]+""])
-    msg.author.send("DM'd");
-  }
-}])
+    cmd: "mute",
+    desc: "Prevents notifications from being sent for a speficied ammount of time (in hours)",
+    exe: (msg, args, params)=>{
+        if(!Number(args[0]))
+            return msg.author.send("Enter a number after the command")
+    }
+}
+])
 
 db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
   var newPost = snapshot.val();
