@@ -82,7 +82,7 @@ Disc.onMessage([{
 },{
   cmd: "get",
   desc: "Get your firebase UID",
-  exe: (msg, args, params)={
+  exe: (msg, args, params)=>{
 
   }
 }
