@@ -70,19 +70,24 @@ Disc.onMessage([{
     exe: (msg, args, params)=>{
         if(!Number(args[0]))
             return msg.author.send("Enter a number after the command")
-        
+        changeMute(1, msg.author.id)
+        msg.channel.send("You have muted your accounts for "+parseInt(args[0])+" hours")
+        setTimeout(()=>{
+          changeMute(0, msg.author.id)
+        },parseInt(args[0])*1000*60*60)
     }
 },{
   cmd: "unmute",
   desc: "Unmutes yourself.",
-  exe: (msg, args, params)=>{
-    
+  exe: async (msg, args, params)=>{
+    changeMute(0, msg.author.id)
+    msg.channel.send("All your accounts are now unmuted!")
   }
 },{
   cmd: "refresh",
   desc: "sets refresh rate in seconds",
   exe: (msg, args, params)=>{
-    let seconds = parseInt(args[1])
+    let seconds = parseInt(args[0])
     msg.channel.send("Refresh rate set to "+seconds+" seconds!")
     refresh=seconds
   }
@@ -98,13 +103,13 @@ Disc.onMessage([{
 }
 ])
 
-let getUIDFromToken=()=>{
-  db.ref('accounts').once('value').then((snapshot)=>{
-    snapshot.forEach(accountSnapshot=>{
-      if(accountSnapshot.val().discID===msg.author.id)
-        return accountSnapshot.key
-    })
-  })
+let changeMute=(m, id)=>{
+  var ref = db.ref('accounts');
+        ref.orderByChild('discID').equalTo(''+id).on("child_added", function(snapshot) {
+          ref.child(snapshot.key).update({
+            mute: m
+           })
+        });
 }
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
