@@ -22,6 +22,39 @@ admin.initializeApp({
 });
 
 var db = admin.database();
+const actualToken = process.env.TOKEN || TOKEN  
+const Disc = require("@kihtrak/discord-bot-utils")
+Disc.setToken(actualToken)
+Disc.setPrefix("!")
+
+Disc.onReady(()=>{
+  console.log(`Logged in as ${Disc.client.user.tag}!`)
+})
+
+Disc.onMessage([{
+  cmd: "login",
+  desc: "Logs you in",
+  exe: (msg, args, params)=>{
+    const embed = new Disc.Discord.MessageEmbed()
+    .setColor('#B106C2')
+    .setTitle('Social Simplicity: A Solution to Doom Scrolling')
+    .setURL('https://social-simplicity-21.herokuapp.com/')
+    .setDescription('Welcome to social simplicity! Some other BS here. Click [here](https://social-simplicity-21.herokuapp.com/) to get started.')
+    .addField('Instructions', '1. Click the above link and create an account with social simplicity.\n2. Log in with a social media site you would like to receive updates for.', true)
+    .setImage('https://i.imgur.com/PAo4Wat.png')
+    .setTimestamp()
+    .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    msg.channel.send(embed)
+  }
+},{
+  cmd: "add",
+  desc: "Add users to a whitelist",
+  exe: (msg, args, params)=>{
+    //Do after firebase auth
+    db.ref(msg.author.id+"").child("insta").child("whitelist").push([args[0]+""])
+    msg.author.send("DM'd");
+  }
+}])
 
 app.get('/', async function (req, res) {
     res.render('landing', { DOMAIN})
