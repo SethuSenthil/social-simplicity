@@ -46,7 +46,6 @@ app.get('/following', async function (req, res) {
     db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
         const { username, password } = snap.val()
         let client = new Instagram({ username, password });
-        instaClients[`${username}@${password}`] = client
         const log = await client.login()
         console.log(log)
         if(!log.authenticated)
@@ -86,6 +85,39 @@ app.post('/sign-in', bodyParser.json(), async (req, res) => {
         return res.json({status:"success"})
     }
     return res.json({status:"no plat"})
+});
+
+app.post('/get-posts', bodyParser.json(), async (req, res) => {
+    const username = req.body.username
+    const password = req.body.password
+    const uid = req.body.uid
+    db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+        const { username, password, following } = snap.val()
+        let client = new Instagram({ username, password });
+        const log = await client.login()
+        console.log(log)
+        if(!log.authenticated)
+            return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
+        const userId = log.userId
+        let arr = []
+        for(let handle in following)
+            if(following[handle]){
+                const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
+                //console.log(posts.user.edge_owner_to_timeline_media.page_info)
+                //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
+                for(let post of posts.user.edge_owner_to_timeline_media.edges){
+                    const displayUrl = post.node.display_url
+                    const caption = post.node.edge_media_to_caption.edges[0].node.text
+                    const timestamp = post.node.taken_at_timestamp
+                    const video = post.node.video_url
+                    const obj = {displayUrl,caption,timestamp,video}
+                    arr.push(obj)
+                }
+            }
+        arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
+        console.log(arr)
+        return res.json(arr)
+    }).catch(e=>res.json(e))
 });
 
 const port = process.env.PORT || 4242
