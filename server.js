@@ -7,6 +7,7 @@ const app = express();
 app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
+const axios = require('axios')
 
 app.use(express.static(__dirname + '/public'));
 
@@ -49,21 +50,27 @@ Disc.onMessage([{
     msg.author.send(embed)
     msg.channel.send("Sent you a DM!")
   }
-},{
-  cmd: "add",
-  desc: "Add users to a whitelist",
-  exe: (msg, args, params)=>{
-    //Do after firebase auth
-    db.ref(msg.author.id+"").child("insta").child("whitelist").push([args[0]+""])
-    msg.author.send("DM'd");
-  }
 }])
 
-db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
-  var newPost = snapshot.val();
-  if(listen)
-  sendDM(newPost.discID)
-});
+// db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
+//   var newPost = snapshot.val().Instagram;
+//   if(listen)
+//   sendDM(newPost.discID)
+// });
+
+setInterval(function(){ 
+  let lastUpdate = new Date(new Date().getTime()-5*60*1000)
+  db.ref('accounts').once('value').then((snapshot)=>{
+    snapshot.forEach(accountSnapshot=>{
+      if(accountSnapshot.val().Instagram!=null){
+        console.log(accountSnapshot.val().Instagram)
+        
+      }
+    })
+  })
+ }, 5000)
+
+
 let sendDM=(disc)=>{
   try{
     const embed = new Disc.Discord.MessageEmbed()
