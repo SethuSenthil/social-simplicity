@@ -28,7 +28,7 @@ app.get('/', async function (req, res) {
 })
 
 app.get('/signin', async function (req, res) {
-    res.render('login', { DOMAIN, platform:"insta"})
+    res.render('login', { DOMAIN, platform:"Instagram"})
 })
 
 app.get('/login', async function (req, res) {
@@ -41,36 +41,48 @@ app.get('/profile', async function (req, res) {
 
 app.get('/following', async function (req, res) {
     const uid = req.query.uid
-    const client = new Instagram({ username, password });
-    const log = await client.login()
-    console.log(log)
-    if(!log.authenticated)
-        return res.send("password failed (maybe it changed? try reseting your insta account)")
-    const userId = log.userId
-    const profile = await client.getProfile()
-    let followingsArr = []
-    let prevCursor
-    do{
-        const followings = await client.getFollowings({ userId, after: prevCursor})
-        prevCursor = followings.page_info.end_cursor
-        followingsArr=[...followingsArr,...followings.data]
-    }while(followings.page_info.has_next_page)
-    console.log(followingsArr)
-    res.render('following', { DOMAIN, followingsArr, profile })
+    if(!uid)
+        return res.send("No uid provided!")
+    db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+        const { username, password } = snap.val()
+        let client = new Instagram({ username, password });
+        instaClients[`${username}@${password}`] = client
+        const log = await client.login()
+        console.log(log)
+        if(!log.authenticated)
+            return res.send("password failed (maybe it changed? try reseting your insta account)")
+        const userId = log.userId
+        const profile = await client.getProfile()
+        console.log(profile)
+        let followingsArr = []
+        let followings
+        do{
+            followings = await client.getFollowings({ userId, after: followings?.page_info?.prevCursor})
+            prevCursor = followings.page_info.end_cursor
+            followingsArr=[...followingsArr,...followings.data]
+        }while(followings.page_info.has_next_page)
+        console.log(followingsArr)
+        res.render('following', { DOMAIN, followingsArr, profile })
+    }).catch(e=>res.send)
+    
 })
-
+const instaClients = {}
+const instaIds = {}
 app.post('/sign-in', bodyParser.json(), async (req, res) => {
     //console.log(req.body)
     const username = req.body.username
     const password = req.body.password
-    if(req.body.platform == "insta"){
+    const uid = req.body.uid
+    if(req.body.platform == "Instagram"){
         const client = new Instagram({ username, password });
         const log = await client.login()
         console.log(log)
         if(!log.authenticated)
             return res.json({status:"Incorrect username/password"})
+        instaClients[`${username}@${password}`] = client
         const userId = log.userId
-        db.ref('accounts').child(username).update({password})
+        instaIds[`${username}@${password}`] = userId
+        db.ref('accounts').child(uid).child('Instagram').update({ username, password })
         return res.json({status:"success"})
     }
     return res.json({status:"no plat"})

@@ -36,18 +36,20 @@
 			<div class="wrap-login100 p-l-55 p-r-55 p-t-65 p-b-54">
 				<form class="login100-form validate-form" action="" onsubmit="return false;">
 					<span class="login100-form-title p-b-49">
-						Login
+						{{platform}} Login
 					</span>
 
 					<div class="wrap-input100 validate-input m-b-23" data-validate="Username is reauired">
 						<span class="label-input100">Username</span>
-						<input id="username" class="input100" type="text" name="username" placeholder="Type your username">
+						<input id="username" class="input100" type="text" name="username"
+							placeholder="Type your username">
 						<span class="focus-input100" data-symbol="&#xf206;"></span>
 					</div>
 
 					<div class="wrap-input100 validate-input" data-validate="Password is required">
 						<span class="label-input100">Password</span>
-						<input id="password" class="input100" type="password" name="pass" placeholder="Type your password">
+						<input id="password" class="input100" type="password" name="pass"
+							placeholder="Type your password">
 						<span class="focus-input100" data-symbol="&#xf190;"></span>
 					</div>
 
@@ -65,8 +67,39 @@
 			</div>
 		</div>
 	</div>
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
+
+	<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-analytics.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-auth.js"></script>
 
 	<script>
+		// Your web app's Firebase configuration
+		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+		var firebaseConfig = {
+			apiKey: "AIzaSyA-uWZPymTgsHZtt457Fbb6FpfqXA4IVb0",
+			authDomain: "hacklahoma-proj.firebaseapp.com",
+			databaseURL: "https://hacklahoma-proj-default-rtdb.firebaseio.com",
+			projectId: "hacklahoma-proj",
+			storageBucket: "hacklahoma-proj.appspot.com",
+			messagingSenderId: "745802510134",
+			appId: "1:745802510134:web:0076e26b3fc5a6f8c58d97",
+			measurementId: "G-F6WZYN53T5"
+		};
+		// Initialize Firebase
+		firebase.initializeApp(firebaseConfig);
+		firebase.analytics();
+		let uid = null
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				uid = user.uid
+			} else {
+				window.location = "{{ DOMAIN }}"
+			}
+		});
+
 		function sendCredentials() {
 			fetch("/sign-in", {
 				method: "POST",
@@ -76,14 +109,15 @@
 				body: JSON.stringify({
 					platform: "{{platform}}",
 					username: document.getElementById("username").value,
-					password: document.getElementById("password").value
+					password: document.getElementById("password").value,
+					uid:uid,
 				})
-			}).then(res=>res.json()).then((res)=>{
+			}).then(res => res.json()).then((res) => {
 				console.log(res)
-				if(res.status != "success"){
+				if (res.status != "success") {
 					alert(res.status)
-				}else{
-					window.location = "/following"
+				} else {
+					window.location = `/following?uid=${uid}`
 				}
 			})
 		}
