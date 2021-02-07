@@ -215,7 +215,7 @@ app.get('/sign-in', bodyParser.json(), async (req, res) => {
     return res.json({status:"no plat"})
 });
 
-app.post('/get-posts', bodyParser.json(), async (req, res) => {
+app.get('/get-posts', bodyParser.json(), async (req, res) => {
     const uid = req.query.uid
     db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
         const { username, password, following } = snap.val()
