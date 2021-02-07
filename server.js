@@ -24,7 +24,6 @@ admin.initializeApp({
 });
 setTimeout(function(){ listen=true; }, 3000);
 var db = admin.database();
-let posts=[];
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
@@ -75,7 +74,6 @@ let sendDM=(disc)=>{
     .setImage('https://i.imgur.com/PAo4Wat.png')
     .setTimestamp()
     .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
-    msg.channel.send(embed)
     Disc.client.users.cache.get(''+disc).send(embed)
   }
   catch{
