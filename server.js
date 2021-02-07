@@ -50,7 +50,29 @@ Disc.onMessage([{
     msg.author.send(embed)
     msg.channel.send("Sent you a DM!")
   }
-}])
+},{
+    cmd: "about",
+    desc: "Sends you a link to our homepage",
+    exe: (msg, args, params)=>{
+      const embed = new Disc.Discord.MessageEmbed()
+      .setColor('#B106C2')
+      .setTitle('Social Simplicity: A Solution to Doom Scrolling')
+      .setURL('https://social-simplicity-21.herokuapp.com/')
+      .setDescription('Here is the [link](https://social-simplicity-21.herokuapp.com/) to our homepage.')
+      .setThumbnail('https://i.imgur.com/PAo4Wat.png')
+      .setTimestamp()
+      .setFooter('Social Simplicity', 'https://i.imgur.com/PAo4Wat.png');
+      msg.author.send(embed)
+    }
+  },{
+    cmd: "mute",
+    desc: "Prevents notifications from being sent for a speficied ammount of time (in hours)",
+    exe: (msg, args, params)=>{
+        if(!Number(args[0]))
+            return msg.author.send("Enter a number after the command")
+    }
+}
+])
 
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
@@ -203,13 +225,11 @@ app.post('/get-posts', bodyParser.json(), async (req, res) => {
                 //console.log(posts.user.edge_owner_to_timeline_media.page_info)
                 //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
                 for(let post of posts.user.edge_owner_to_timeline_media.edges){
-                    const displayUrl = post.node.display_url
-                    let caption="No caption"
-                    if(post.node.edge_media_to_caption.edges[0]!=null)
-                    caption = post.node.edge_media_to_caption.edges[0].node.text
-                    const timestamp = post.node.taken_at_timestamp
-                    const video = post.node.video_url
-                    const obj = {displayUrl,caption,timestamp,video, handle}
+                    const displayUrl = post?.node?.display_url
+                    const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
+                    const timestamp = post?.node?.taken_at_timestamp
+                    const video = post?.node?.video_url
+                    const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video}
                     arr.push(obj)
                 }
             }
