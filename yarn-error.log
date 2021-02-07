@@ -1,0 +1,49 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js
+
+PATH: 
+  C:\Program Files\AdoptOpenJDK\jdk-13.0.2.8-hotspot\bin;C:\Program Files\Oculus\Support\oculus-runtime;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git LFS;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\SourceGear\Common\DiffMerge\;C:\Program Files\MATLAB\R2020a\bin;C:\Program Files (x86)\Yarn\bin\;C:\ProgramData\chocolatey\bin;C:\Program Files\nodejs\;C:\Program Files (x86)\Certbot\bin;C:\Users\karth\.windows-build-tools\python27\;C:\Users\karth\AppData\Roaming\npm\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin;C:\Users\karth\AppData\Roaming\npm\node_modules\windows-build-tools\node_modules\.bin;C:\Users\karth\AppData\Roaming\npm\node_modules\.bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Git\cmd;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Git LFS;C:\Program Files\nodejs\;C:\Users\karth\Miniconda3;C:\Users\karth\Miniconda3\Library\mingw-w64\bin;C:\Users\karth\Miniconda3\Library\usr\bin;C:\Users\karth\Miniconda3\Library\bin;C:\Users\karth\Miniconda3\Scripts;C:\Users\karth\AppData\Local\Programs\Python\Python37-32\Scripts\;C:\Users\karth\AppData\Local\Programs\Python\Python37-32\;C:\Users\karth\AppData\Local\Microsoft\WindowsApps;C:\Users\karth\AppData\Local\GitHubDesktop\bin;C:\Users\karth\AppData\Local\atom\bin;C:\Users\karth\Documents\src\flutter\bin;C:\Users\karth\Downloads\swigwin-3.0.12.zip\swigwin-3.0.12\swig;C:\Program Files\heroku\bin;C:\Users\karth\AppData\Local\Programs\PROS\cli;C:\Users\karth\AppData\Local\Programs\PROS\toolchain\usr\bin;C:\Users\karth\AppData\Local\Programs\PROS\cquery;C:\Users\karth\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Java\jdk-14.0.1\bin;C:\Users\karth\AppData\Local\Programs\MiKTeX 2.9\miktex\bin\x64\;C:\Users\karth\AppData\Local\Programs\Microsoft VS Code\bin;C:\php;C:\Users\karth\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\Users\karth\AppData\Local\Yarn\bin;C:\Users\karth\AppData\Local\Android\Sdk\tools;C:\Users\karth\AppData\Local\Android\Sdk\tools\bin;C:\Users\karth\AppData\Local\Android\Sdk\platform-tools;C:\Users\karth\AppData\Roaming\npm;C:\Users\karth\Downloads\ngrok-stable-windows-amd64;C:\Users\karth\Downloads\ethminer-0.19.0-alpha.0-cuda10.0-windows-amd64\bin;
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  15.2.1
+
+Platform: 
+  win32 x64
+
+Trace: 
+  SyntaxError: C:\Users\karth\Documents\node\social-simplicity\package.json: Unexpected token < in JSON at position 214
+      at JSON.parse (<anonymous>)
+      at C:\Program Files (x86)\Yarn\lib\cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (C:\Program Files (x86)\Yarn\lib\cli.js:310:30)
+      at C:\Program Files (x86)\Yarn\lib\cli.js:321:13
+
+npm manifest: 
+  {
+    "dependencies": {
+      "@kihtrak/discord-bot-utils": "^5.1.0",
+      "body-parser": "^1.19.0",
+      "dotenv": "^8.2.0",
+      "express": "^4.17.1",
+      "express-handlebars": "^5.2.0",
+      "firebase-admin": "^9.4.2",
+  <<<<<<< HEAD
+      "instagram-web-api": "^2.2.2",
+      "twitter-api-client": "^1.3.0"
+  =======
+      "instagram-web-api": "^2.2.2"
+    },
+    "scripts": {
+      "start": "node server.js"
+  >>>>>>> 57c6a343750dba0bc695bc3947b35deed4186e1b
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
