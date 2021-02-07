@@ -1,220 +1,277 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<title>Table V01</title>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-<!--===============================================================================================-->	
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="css/util.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
+    <title>Table V01</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="vendor/perfect-scrollbar/perfect-scrollbar.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="css/util.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="fonts/iconic/css/material-design-iconic-font.min.css">
 
     <style>
         .pure-material-checkbox {
-    z-index: 0;
-    position: relative;
-    display: inline-block;
-    color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
-    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
-    font-size: 16px;
-    line-height: 1.5;
-}
+            z-index: 0;
+            position: relative;
+            display: inline-block;
+            color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.87);
+            font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+            font-size: 16px;
+            line-height: 1.5;
+        }
 
-/* Input */
-.pure-material-checkbox > input {
-    appearance: none;
-    -moz-appearance: none;
-    -webkit-appearance: none;
-    z-index: -1;
-    position: absolute;
-    left: -10px;
-    top: -8px;
-    display: block;
-    margin: 0;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
-    box-shadow: none;
-    outline: none;
-    opacity: 0;
-    transform: scale(1);
-    pointer-events: none;
-    transition: opacity 0.3s, transform 0.2s;
-}
+        /* Input */
+        .pure-material-checkbox>input {
+            appearance: none;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            z-index: -1;
+            position: absolute;
+            left: -10px;
+            top: -8px;
+            display: block;
+            margin: 0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+            box-shadow: none;
+            outline: none;
+            opacity: 0;
+            transform: scale(1);
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.2s;
+        }
 
-/* Span */
-.pure-material-checkbox > span {
-    display: inline-block;
-    width: 100%;
-    cursor: pointer;
-}
+        /* Span */
+        .pure-material-checkbox>span {
+            display: inline-block;
+            width: 100%;
+            cursor: pointer;
+        }
 
-/* Box */
-.pure-material-checkbox > span::before {
-    content: "";
-    display: inline-block;
-    box-sizing: border-box;
-    margin: 3px 11px 3px 1px;
-    border: solid 2px; /* Safari */
-    border-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
-    border-radius: 2px;
-    width: 18px;
-    height: 18px;
-    vertical-align: top;
-    transition: border-color 0.2s, background-color 0.2s;
-}
+        /* Box */
+        .pure-material-checkbox>span::before {
+            content: "";
+            display: inline-block;
+            box-sizing: border-box;
+            margin: 3px 11px 3px 1px;
+            border: solid 2px;
+            /* Safari */
+            border-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+            border-radius: 2px;
+            width: 18px;
+            height: 18px;
+            vertical-align: top;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
 
-/* Checkmark */
-.pure-material-checkbox > span::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 3px;
-    left: 1px;
-    width: 10px;
-    height: 5px;
-    border: solid 2px transparent;
-    border-right: none;
-    border-top: none;
-    transform: translate(3px, 4px) rotate(-45deg);
-}
+        /* Checkmark */
+        .pure-material-checkbox>span::after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 3px;
+            left: 1px;
+            width: 10px;
+            height: 5px;
+            border: solid 2px transparent;
+            border-right: none;
+            border-top: none;
+            transform: translate(3px, 4px) rotate(-45deg);
+        }
 
-/* Checked, Indeterminate */
-.pure-material-checkbox > input:checked,
-.pure-material-checkbox > input:indeterminate {
-    background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
-}
+        /* Checked, Indeterminate */
+        .pure-material-checkbox>input:checked,
+        .pure-material-checkbox>input:indeterminate {
+            background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+        }
 
-.pure-material-checkbox > input:checked + span::before,
-.pure-material-checkbox > input:indeterminate + span::before {
-    border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
-    background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
-}
+        .pure-material-checkbox>input:checked+span::before,
+        .pure-material-checkbox>input:indeterminate+span::before {
+            border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+            background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+        }
 
-.pure-material-checkbox > input:checked + span::after,
-.pure-material-checkbox > input:indeterminate + span::after {
-    border-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
-}
+        .pure-material-checkbox>input:checked+span::after,
+        .pure-material-checkbox>input:indeterminate+span::after {
+            border-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+        }
 
-.pure-material-checkbox > input:indeterminate + span::after {
-    border-left: none;
-    transform: translate(4px, 3px);
-}
+        .pure-material-checkbox>input:indeterminate+span::after {
+            border-left: none;
+            transform: translate(4px, 3px);
+        }
 
-/* Hover, Focus */
-.pure-material-checkbox:hover > input {
-    opacity: 0.04;
-}
+        /* Hover, Focus */
+        .pure-material-checkbox:hover>input {
+            opacity: 0.04;
+        }
 
-.pure-material-checkbox > input:focus {
-    opacity: 0.12;
-}
+        .pure-material-checkbox>input:focus {
+            opacity: 0.12;
+        }
 
-.pure-material-checkbox:hover > input:focus {
-    opacity: 0.16;
-}
+        .pure-material-checkbox:hover>input:focus {
+            opacity: 0.16;
+        }
 
-/* Active */
-.pure-material-checkbox > input:active {
-    opacity: 1;
-    transform: scale(0);
-    transition: transform 0s, opacity 0s;
-}
+        /* Active */
+        .pure-material-checkbox>input:active {
+            opacity: 1;
+            transform: scale(0);
+            transition: transform 0s, opacity 0s;
+        }
 
-.pure-material-checkbox > input:active + span::before {
-    border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
-}
+        .pure-material-checkbox>input:active+span::before {
+            border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+        }
 
-.pure-material-checkbox > input:checked:active + span::before {
-    border-color: transparent;
-    background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
-}
+        .pure-material-checkbox>input:checked:active+span::before {
+            border-color: transparent;
+            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+        }
 
-/* Disabled */
-.pure-material-checkbox > input:disabled {
-    opacity: 0;
-}
+        /* Disabled */
+        .pure-material-checkbox>input:disabled {
+            opacity: 0;
+        }
 
-.pure-material-checkbox > input:disabled + span {
-    color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
-    cursor: initial;
-}
+        .pure-material-checkbox>input:disabled+span {
+            color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+            cursor: initial;
+        }
 
-.pure-material-checkbox > input:disabled + span::before {
-    border-color: currentColor;
-}
+        .pure-material-checkbox>input:disabled+span::before {
+            border-color: currentColor;
+        }
 
-.pure-material-checkbox > input:checked:disabled + span::before,
-.pure-material-checkbox > input:indeterminate:disabled + span::before {
-    border-color: transparent;
-    background-color: currentColor;
-}
-
+        .pure-material-checkbox>input:checked:disabled+span::before,
+        .pure-material-checkbox>input:indeterminate:disabled+span::before {
+            border-color: transparent;
+            background-color: currentColor;
+        }
     </style>
 </head>
+
 <body>
-	
-	<div class="limiter">
-		<div class="container-table100">
-            <div class="wrap-table100"><span style="margin-bottom:30px; background-color:aliceblue; border-radius:10px; padding:20px;text-align:center;  display: block;
+
+    <div class="limiter">
+        <div class="container-table100">
+            <div class="wrap-table100"
+                style="margin-bottom:30px; background-color:aliceblue; border-radius:10px; padding:20px;text-align:center;  display: block;">
+                <span style="
   font-family: Poppins-Bold;
   font-size: 39px;
   color: #333333;
   line-height: 1.2;
-  text-align: center;">Select the people most important to you:</span></div>
-			<div class="wrap-table100">
-				<div class="table100">
-					<table>
-						<thead>
-							<tr class="table100-head">
-								<th>Important?</th>
+  text-align: center;">Select the people most important to you:</span><br><span style="
+  font-family: Poppins-Normal;
+  font-size: 29px;
+  color: #333333;
+  line-height: 1.2;
+  text-align: center;">(Your selection will be auto-saved)</span></div>
+            <div class="wrap-table100">
+                <div class="table100">
+                    <table>
+                        <thead>
+                            <tr class="table100-head">
+                                <th>Important?</th>
                                 <th>Profile</th>
-							</tr>
-						</thead>
-						<tbody>
+                            </tr>
+                        </thead>
+                        <tbody>
                             {{#each followingsArr}}
-								<tr>
-                                    <td><label class="pure-material-checkbox">
-  <input type="checkbox">
-  <span>{{this.full_name}}</span>
-</label></td>
-                                    <td><img src="{{this.profile_pic_url}}" style="height:50px; width:50px;border-radius:25px; margin-right:10px;"/>{{this.username}}</td>
-                                    
-								</tr>
+                            <tr>
+                                <td>
+                                    <label class="pure-material-checkbox">
+                                        <input type="checkbox" onclick="checkedFunc(this)" name="{{this.username}}" id="{{this.username}}">
+                                        <span>{{this.full_name}}</span>
+                                    </label>
+                                </td>
+                                <td><img src="{{this.profile_pic_url}}"
+                                        style="height:50px; width:50px;border-radius:25px; margin-right:10px;margin:5px;" />{{this.username}}
+                                </td>
+
+                            </tr>
                             {{/each}}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-app.js"></script>
 
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.6/firebase-database.js"></script>
+    <script>
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        var firebaseConfig = {
+            apiKey: "AIzaSyA-uWZPymTgsHZtt457Fbb6FpfqXA4IVb0",
+            authDomain: "hacklahoma-proj.firebaseapp.com",
+            databaseURL: "https://hacklahoma-proj-default-rtdb.firebaseio.com",
+            projectId: "hacklahoma-proj",
+            storageBucket: "hacklahoma-proj.appspot.com",
+            messagingSenderId: "745802510134",
+            appId: "1:745802510134:web:0076e26b3fc5a6f8c58d97",
+            measurementId: "G-F6WZYN53T5"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        firebase.analytics();
+        let uid = null
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                uid = user.uid
+                database.ref('accounts').child(uid).child('Instagram').child('following').once('value',(snap)=>{
+                    for(let handle in snap.val()){
+                        if(document.getElementById(handle))
+                            document.getElementById(handle).checked = snap.val()[handle] == "true" || snap.val()[handle] === true
+                    }
+                })
+            } else {
+                window.location = "{{ DOMAIN }}"
+            }
+        });
+        var database = firebase.database();
 
-	
+        function checkedFunc(target) {
+            database.ref('accounts').child(uid).child('Instagram').child('following').update({
+                [target.name]: target.checked
+            })
+        }
 
-<!--===============================================================================================-->	
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="js/main.js"></script>
+    </script>
+
+    <!--===============================================================================================-->
+    <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="vendor/bootstrap/js/popper.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="js/main.js"></script>
 
 </body>
+
 </html>
