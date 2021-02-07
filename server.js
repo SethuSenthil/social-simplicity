@@ -9,7 +9,7 @@ app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 const axios = require('axios')
 //How often the bot checks insta in miliseconds
-let refreshRate=30000
+let refreshRate=300000
 
 app.use(express.static(__dirname + '/public'));
 
