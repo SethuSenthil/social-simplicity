@@ -7,7 +7,8 @@
     "express-handlebars": "^5.2.0",
     "firebase-admin": "^9.4.2",
     "instagram-web-api": "^2.2.2"
-  },"scripts": {
+  },
+  "scripts": {
     "start": "node server.js"
- }
+  }
 }
