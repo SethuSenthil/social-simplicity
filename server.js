@@ -57,11 +57,9 @@ Disc.onMessage([{
 //   if(listen)
 //   sendDM(newPost.discID)
 // });
-
+let lastCheck=Date.now()
 setInterval(function(){ 
-  let currentTime = Date.now()
-  let lastUpdate = Date.now()-60000
-  console.log(currentTime+" "+lastUpdate)
+  console.log(lastCheck)
   db.ref('accounts').once('value').then((snapshot)=>{
     snapshot.forEach(accountSnapshot=>{
       let discID=""+accountSnapshot.val().discID;
@@ -74,12 +72,13 @@ setInterval(function(){
             uid: accountSnapshot.key
           }}).then(res=>{
             res.data.forEach(async(e)=>{
-              if(e.timestamp<=currentTime&&e.timestamp>=lastUpdate){
+              if(e.timestamp>=lastCheck){
                 await postsToSend.push(e)
               }
               console.log(e)
                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
             })
+            lastCheck=Date.now()
             postsToSend.forEach(e=>{
               try{
                 const embed = new Disc.Discord.MessageEmbed()
