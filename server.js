@@ -12,6 +12,8 @@ app.use(express.static(__dirname + '/public'));
 
 const DOMAIN = process.env.DOMAIN
 
+let listen=false;
+
 var admin = require('firebase-admin');
 
 var serviceAccount = JSON.parse(process.env.FIREBASESERVICEKEY);
@@ -20,9 +22,9 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.DATABASEURL
 });
-
+setTimeout(function(){ listen=true; }, 3000);
 var db = admin.database();
-
+let posts=[];
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
@@ -45,7 +47,8 @@ Disc.onMessage([{
     .setImage('https://i.imgur.com/PAo4Wat.png')
     .setTimestamp()
     .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
-    msg.channel.send(embed)
+    msg.author.send(embed)
+    msg.channel.send("Sent you a DM!")
   }
 },{
   cmd: "add",
@@ -55,10 +58,15 @@ Disc.onMessage([{
     db.ref(msg.author.id+"").child("insta").child("whitelist").push([args[0]+""])
     msg.author.send("DM'd");
   }
-},{
-  cmd: "t",
-  desc:"",
-  exe:(msg, args, params)=>{
+}])
+
+db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
+  var newPost = snapshot.val();
+  if(listen)
+  sendDM(newPost.discID)
+});
+let sendDM=(disc)=>{
+  try{
     const embed = new Disc.Discord.MessageEmbed()
     .setColor('#FFF400')
     .setTitle('Sign Up Success!')
@@ -68,15 +76,12 @@ Disc.onMessage([{
     .setTimestamp()
     .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
     msg.channel.send(embed)
+    Disc.client.users.cache.get(''+disc).send(embed)
   }
-}])
+  catch{
 
-db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
-  var newPost = snapshot.val();
-  var disc=newPost.discID;
-  Disc.client.users.cache.get(''+disc).send("Hello")
-});
-
+  }
+}
 app.get('/', async function (req, res) {
     res.render('landing', { DOMAIN})
 })
