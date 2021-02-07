@@ -80,18 +80,43 @@ Disc.onMessage([{
 //   sendDM(newPost.discID)
 // });
 
-setTimeout(function(){ 
-  let lastUpdate = new Date(new Date().getTime()-5*60*1000)
+setInterval(function(){ 
+  let currentTime = Date.now()
+  let lastUpdate = Date.now()-60000
+  console.log(currentTime+" "+lastUpdate)
   db.ref('accounts').once('value').then((snapshot)=>{
     snapshot.forEach(accountSnapshot=>{
+      let discID=""+accountSnapshot.val().discID;
+      console.log(discID)
       if(accountSnapshot.val().Instagram!=null){
+        let postsToSend=[];
         console.log(accountSnapshot.key)
         try{
           axios.post('http://localhost:4242/get-posts', {}, {params:{
             uid: accountSnapshot.key
           }}).then(res=>{
-  
+            res.data.forEach(async(e)=>{
+              if(e.timestamp<=currentTime&&e.timestamp>=lastUpdate){
+                await postsToSend.push(e)
+              }
+              console.log(e)
+                //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
+            })
+            postsToSend.forEach(e=>{
+              try{
+                const embed = new Disc.Discord.MessageEmbed()
+                .setColor('#C70039')
+                .setTitle('Update from '+e.handle+"!")
+                .setDescription('Caption: '+e.caption)
+                .setImage(e.displayUrl)
+                Disc.client.users.cache.get(discID).send(embed)
+              }
+              catch{
+
+              }
+            })
           })
+          
         }
         catch(err){
           
@@ -99,7 +124,7 @@ setTimeout(function(){
       }
     })
   })
- }, 5000)
+ }, 60000)
 
 
 let sendDM=(disc)=>{
@@ -132,6 +157,8 @@ app.get('/login', async function (req, res) {
 
 app.get('/profile', async function (req, res) {
     res.render('profile', { DOMAIN })
+    if(req.query.first==1)
+      sendDM(req.query.discID+"")
 })
 
 app.get('/following', async function (req, res) {
@@ -199,16 +226,26 @@ app.post('/get-posts', bodyParser.json(), async (req, res) => {
                 //console.log(posts.user.edge_owner_to_timeline_media.page_info)
                 //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
                 for(let post of posts.user.edge_owner_to_timeline_media.edges){
+<<<<<<< HEAD
                     const displayUrl = post?.node?.display_url
                     const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
                     const timestamp = post?.node?.taken_at_timestamp
                     const video = post?.node?.video_url
                     const obj = {displayUrl,caption,timestamp,video}
+=======
+                    const displayUrl = post.node.display_url
+                    let caption="No caption"
+                    if(post.node.edge_media_to_caption.edges[0]!=null)
+                    caption = post.node.edge_media_to_caption.edges[0].node.text
+                    const timestamp = post.node.taken_at_timestamp
+                    const video = post.node.video_url
+                    const obj = {displayUrl,caption,timestamp,video, handle}
+>>>>>>> ffe48e2e5eb94168eb5ae7c5f149baa1706e6eb9
                     arr.push(obj)
                 }
             }
         arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
-        console.log(arr)
+        //console.log(arr)
         return res.json(arr)
     }).catch(e=>res.json(e))
 });
