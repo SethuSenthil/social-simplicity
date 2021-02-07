@@ -22,7 +22,7 @@ admin.initializeApp({
 });
 
 var db = admin.database();
-const actualToken = process.env.TOKEN || TOKEN  
+const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
 Disc.setPrefix("!")
