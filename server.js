@@ -277,6 +277,8 @@ app.get('/get-post', bodyParser.json(), async (req, res) => {
     console.log("retunred")
     return res.send("https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/146711608_329003628452944_1173123558701968683_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=104&_nc_ohc=g-YapnS4VnEAX9RQuVo&tp=1&oh=e0e9988290d8b23192bd5b0c3f57cf58&oe=6049401A")
 })
+
+const cache = {}
 app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
   const username = req.query.username
   const password = req.query.password
@@ -290,29 +292,30 @@ app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
     uid=snapshot.key
   })
   if(uid!="NONE"){
-    db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
-      const { username, password, following } = snap.val()
-      let client = new Instagram({ username, password });
-      const log = await client.login()
-      console.log(log)
-      if(!log.authenticated)
-          return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
-      const userId = log.userId
-      let arr = []
-      for(let handle in following)
-          if(following[handle]){
-              const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
-              for(let post of posts.user.edge_owner_to_timeline_media.edges){
-                  const displayUrl = post?.node?.display_url
-                  const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
-                  const timestamp = post?.node?.taken_at_timestamp
-                  const video = post?.node?.video_url
-                  const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
-                  arr.push(obj)
-              }
-          }
-      arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
-      return res.send(arr[Math.random()*arr.length].displayUrl)
+    if(!cache[uid])
+        db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+        const { username, password, following } = snap.val()
+        let client = new Instagram({ username, password });
+        const log = await client.login()
+        console.log(log)
+        if(!log.authenticated)
+            return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
+        const userId = log.userId
+        let arr = []
+        for(let handle in following)
+            if(following[handle]){
+                const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
+                for(let post of posts.user.edge_owner_to_timeline_media.edges){
+                    const displayUrl = post?.node?.display_url
+                    const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
+                    const timestamp = post?.node?.taken_at_timestamp
+                    const video = post?.node?.video_url
+                    const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
+                    arr.push(obj)
+                }
+            }
+        cache[uid] = arr.sort((a,b)=>b.timestamp-a.timestamp)
+    return res.send((cache[uid])[Math.random()*(cache[uid]).length].displayUrl)
   }).catch(e=>res.send(e))
   }
 });
