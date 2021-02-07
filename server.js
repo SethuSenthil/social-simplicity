@@ -8,12 +8,12 @@ app.engine('handlebars', exphbs());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 const axios = require('axios')
+//How often the bot checks insta in miliseconds
+let refreshRate=30000
 
 app.use(express.static(__dirname + '/public'));
 
 const DOMAIN = process.env.DOMAIN
-
-let listen=false;
 
 var admin = require('firebase-admin');
 
@@ -23,7 +23,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.DATABASEURL
 });
-setTimeout(function(){ listen=true; }, 3000);
+
 var db = admin.database();
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
@@ -71,6 +71,13 @@ Disc.onMessage([{
         if(!Number(args[0]))
             return msg.author.send("Enter a number after the command")
     }
+},{
+  cmd: "refresh",
+  desc: "sets refresh rate in seconds",
+  exe: (msg, args, params)=>{
+    let seconds = parseInt(args[1])
+    msg.channel.send("Refresh rate set to ")
+  }
 }
 ])
 
@@ -79,7 +86,7 @@ Disc.onMessage([{
 //   if(listen)
 //   sendDM(newPost.discID)
 // });
-let lastCheck=Date.now()
+let lastCheck=Math.floor(Date.now()/1000)
 setInterval(function(){ 
   console.log(lastCheck)
   db.ref('accounts').once('value').then((snapshot)=>{
@@ -96,11 +103,11 @@ setInterval(function(){
             res.data.forEach(async(e)=>{
               if(e.timestamp>=lastCheck){
                 await postsToSend.push(e)
-              }
+              }//1612696754674
               console.log(e)
                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
             })
-            lastCheck=Date.now()
+            lastCheck=Math.floor(Date.now()/1000)
             postsToSend.forEach(e=>{
               try{
                 const embed = new Disc.Discord.MessageEmbed()
@@ -123,7 +130,7 @@ setInterval(function(){
       }
     })
   })
- }, 60000)
+ }, refreshRate)
 
 
 let sendDM=(disc)=>{
@@ -229,7 +236,7 @@ app.post('/get-posts', bodyParser.json(), async (req, res) => {
                     const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
                     const timestamp = post?.node?.taken_at_timestamp
                     const video = post?.node?.video_url
-                    const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video}
+                    const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
                     arr.push(obj)
                 }
             }
