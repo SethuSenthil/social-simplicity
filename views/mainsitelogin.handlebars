@@ -123,6 +123,7 @@
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             var uid = user.uid;
+            window.location = "/profile"
         } else {
             console.log("Not signed in")
         }
