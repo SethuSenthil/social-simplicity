@@ -129,7 +129,7 @@
 			await firebase.database().ref('accounts/'+uid).update({
 						discID: url.searchParams.get("disc")
 			});
-            window.location = "/profile"
+            window.location = "/profile?first=1&discID="+url.searchParams.get("disc")
         } else {
             console.log("Not signed in")
         }
