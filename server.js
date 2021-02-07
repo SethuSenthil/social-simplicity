@@ -147,9 +147,7 @@ app.post('/sign-in', bodyParser.json(), async (req, res) => {
 });
 
 app.post('/get-posts', bodyParser.json(), async (req, res) => {
-    const username = req.body.username
-    const password = req.body.password
-    const uid = req.body.uid
+    const uid = req.query.uid
     db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
         const { username, password, following } = snap.val()
         let client = new Instagram({ username, password });
