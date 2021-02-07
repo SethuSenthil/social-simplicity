@@ -316,7 +316,7 @@ app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
                 }
             }
         cache[uid] = arr.sort((a,b)=>b.timestamp-a.timestamp)
-    return res.send((cache[uid])[Math.random()*(cache[uid]).length].displayUrl)
+    return res.send((cache[uid])[Math.floor(Math.random()*(cache[uid]).length)].displayUrl)
   }).catch(e=>res.send(e))
   }
 });
