@@ -60,7 +60,7 @@ Disc.onMessage([{
 
 setInterval(function(){ 
   let currentTime = Date.now()
-  let lastUpdate = Date.now()-30000
+  let lastUpdate = Date.now()-60000
   console.log(currentTime+" "+lastUpdate)
   db.ref('accounts').once('value').then((snapshot)=>{
     snapshot.forEach(accountSnapshot=>{
@@ -70,13 +70,14 @@ setInterval(function(){
         let postsToSend=[];
         console.log(accountSnapshot.key)
         try{
-          axios.post('https://social-simplicity-21.herokuapp.com//get-posts', {}, {params:{
+          axios.post('http://localhost:4242/get-posts', {}, {params:{
             uid: accountSnapshot.key
           }}).then(res=>{
             res.data.forEach(async(e)=>{
               if(e.timestamp<=currentTime&&e.timestamp>=lastUpdate){
                 await postsToSend.push(e)
               }
+              console.log(e)
                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
             })
             postsToSend.forEach(e=>{
@@ -101,7 +102,7 @@ setInterval(function(){
       }
     })
   })
- }, 15000)
+ }, 60000)
 
 
 let sendDM=(disc)=>{
