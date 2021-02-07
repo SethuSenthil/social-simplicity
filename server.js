@@ -22,6 +22,7 @@ admin.initializeApp({
 });
 
 var db = admin.database();
+
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
@@ -54,7 +55,27 @@ Disc.onMessage([{
     db.ref(msg.author.id+"").child("insta").child("whitelist").push([args[0]+""])
     msg.author.send("DM'd");
   }
+},{
+  cmd: "t",
+  desc:"",
+  exe:(msg, args, params)=>{
+    const embed = new Disc.Discord.MessageEmbed()
+    .setColor('#FFF400')
+    .setTitle('Sign Up Success!')
+    .setDescription('Thanks for creating an account with Social Simplicity! Here are the next steps you need to take in order to receive notifications from other social media sites.')
+    .addField('Instructions', '1. Once logged in, select the platform you would like to use. Only instagram is available at the moment.\n2. Log in with the credentials for your social media site.\n3. A list of everyone you follow will appear. Select the accounts you would like to receive notifications for.\n4. That\'s it! You will now be notified every time a selected user posts. You may edit this list of people any time.', true)
+    .setImage('https://i.imgur.com/PAo4Wat.png')
+    .setTimestamp()
+    .setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');
+    msg.channel.send(embed)
+  }
 }])
+
+db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
+  var newPost = snapshot.val();
+  var disc=newPost.discID;
+  Disc.client.users.cache.get(''+disc).send("Hello")
+});
 
 app.get('/', async function (req, res) {
     res.render('landing', { DOMAIN})
