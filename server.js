@@ -9,7 +9,7 @@ app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 const axios = require('axios')
 //How often the bot checks insta in miliseconds
-let refreshRate=300000
+let refreshRate=10000
 
 app.use(express.static(__dirname + '/public'));
 
@@ -28,7 +28,7 @@ var db = admin.database();
 const actualToken = process.env.TOKEN
 const Disc = require("@kihtrak/discord-bot-utils")
 Disc.setToken(actualToken)
-Disc.setPrefix("~")
+Disc.setPrefix("!")
 
 Disc.onReady(()=>{
   console.log(`Logged in as ${Disc.client.user.tag}!`)
@@ -66,11 +66,18 @@ Disc.onMessage([{
     }
   },{
     cmd: "mute",
-    desc: "Prevents notifications from being sent for a speficied ammount of time (in hours)",
+    desc: "Prevents notifications from being sent for a specified ammount of time (in hours)",
     exe: (msg, args, params)=>{
         if(!Number(args[0]))
             return msg.author.send("Enter a number after the command")
+        
     }
+},{
+  cmd: "unmute",
+  desc: "Unmutes yourself.",
+  exe: (msg, args, params)=>{
+    
+  }
 },{
   cmd: "refresh",
   desc: "sets refresh rate in seconds",
@@ -83,11 +90,22 @@ Disc.onMessage([{
   cmd: "get",
   desc: "Get your firebase UID",
   exe: (msg, args, params)=>{
-   
+    var ref = db.ref('accounts');
+    ref.orderByChild('discID').equalTo(''+msg.author.id).on("child_added", function(snapshot) {
+      msg.channel.send(snapshot.key)
+    });
   }
 }
 ])
 
+let getUIDFromToken=()=>{
+  db.ref('accounts').once('value').then((snapshot)=>{
+    snapshot.forEach(accountSnapshot=>{
+      if(accountSnapshot.val().discID===msg.author.id)
+        return accountSnapshot.key
+    })
+  })
+}
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
 //   if(listen)
@@ -100,7 +118,11 @@ Disc.onMessage([{
 //   console.log(lastCheck)
 //   db.ref('accounts').once('value').then((snapshot)=>{
 //     snapshot.forEach(accountSnapshot=>{
-//       let discID=""+accountSnapshot.val().discID;
+//       let discID=""
+//       let mute=accountSnapshot.val().mute
+//       if(accountSnapshot.val().discID)
+//         discID=""+accountSnapshot.val().discID;
+//       if(discID!="")
 //       console.log(discID)
 //       if(accountSnapshot.val().Instagram!=null){
 //         let postsToSend=[];
@@ -113,8 +135,6 @@ Disc.onMessage([{
 //               if(e.timestamp>=lastCheck){
 //                 await postsToSend.push(e)
 //               }//1612696754674
-//               console.log(e)
-//                 //console.log(e.timestamp<=currentTime&&e.timestamp>=lastUpdate)
 //             })
 //             lastCheck=Math.floor(Date.now()/1000)
 //             postsToSend.forEach(e=>{
@@ -124,7 +144,8 @@ Disc.onMessage([{
 //                 .setTitle('Update from '+e.handle+"!")
 //                 .setDescription('Caption: '+e.caption)
 //                 .setImage(e.displayUrl)
-//                 Disc.client.users.cache.get(discID).send(embed)
+//                 if(discID!=""&&mute==0)
+//                   Disc.client.users.cache.get(discID).send(embed)
 //               }
 //               catch{
 
@@ -238,8 +259,6 @@ app.get('/get-posts', bodyParser.json(), async (req, res) => {
         for(let handle in following)
             if(following[handle]){
                 const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
-                //console.log(posts.user.edge_owner_to_timeline_media.page_info)
-                //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
                 for(let post of posts.user.edge_owner_to_timeline_media.edges){
                     const displayUrl = post?.node?.display_url
                     const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
@@ -250,7 +269,6 @@ app.get('/get-posts', bodyParser.json(), async (req, res) => {
                 }
             }
         arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
-        //console.log(arr)
         return res.json(arr)
     }).catch(e=>res.json(e))
 });
@@ -259,6 +277,45 @@ app.get('/get-post', bodyParser.json(), async (req, res) => {
     console.log("retunred")
     return res.json(([{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/146711608_329003628452944_1173123558701968683_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=104&_nc_ohc=g-YapnS4VnEAX9RQuVo&tp=1&oh=e0e9988290d8b23192bd5b0c3f57cf58&oe=6049401A","caption":"No caption","timestamp":1612701350,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/131595344_3350813321712590_6827048596812120537_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=102&_nc_ohc=xZMR-rxUH1oAX86EuBk&tp=1&oh=fba8abbc3dc4b3ef3d57186c67f13db5&oe=6047F4E8","caption":"Semester took my ability to smile properly","timestamp":1608339584,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/109448062_289844752234263_7735183925030082321_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=103&_nc_ohc=MxEFa1qMZ3EAX_P19uv&tp=1&oh=06b5f58100970cf92dc6e391403577cd&oe=6049B0E6","caption":"No caption","timestamp":1594953951,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/74713600_762413550890598_7769749799565184593_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=106&_nc_ohc=A1iuy7V_s24AX_BkNNI&tp=1&oh=7ad9f207852e441614a2016b86842cfa&oe=6049167D","caption":"I haven't grown since freshman year lol","timestamp":1571626304,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/43628365_295865164354601_2232991383166367372_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=105&_nc_ohc=XHUH_vUQtDQAX-VCyQB&tp=1&oh=691f5b0f8b52b99d49595142782dc65e&oe=60485DE3","caption":"GMCs\nYeh idk what was in my mouth\nPC: @kihtrakr @jamespostrandomstuff","timestamp":1540176208,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/21225025_483863278643629_2202526729094823936_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=101&_nc_ohc=BD0NEdPSGnIAX8oHgBe&tp=1&oh=99c921715032c5243df14989524166d0&oe=60496347","caption":"I went to Williamsburg for a week with @jeffreyy713 . I tagged him in the pictures that he took for me.","timestamp":1504381463,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/13257004_223323038052451_376010010_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=107&_nc_ohc=fkXtlt3mAo4AX8yjHIA&tp=1&oh=b37a7e8fad7ddc7c9ca2e465ce9c4660&oe=604B22FD","caption":"Visited National Aquarium today...saw this thing","timestamp":1464374952,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/13183462_751935031609934_579192862_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=102&_nc_ohc=-RuM7vjqmtsAX8tnAng&tp=1&oh=ca8aaae8cc823b1f92a9946ef580add1&oe=60482549","caption":"Looks so real...\n#Gettysburg","timestamp":1463527623,"handle":"yinforthewin"},{"displayUrl":"https://scontent-iad3-1.cdninstagram.com/v/t51.2885-15/e35/12935013_493355557527040_1596007241_n.jpg?_nc_ht=scontent-iad3-1.cdninstagram.com&_nc_cat=104&_nc_ohc=ZDPRV9dxEQcAX9p2ZBd&tp=1&oh=774451294f6a0ffe04e410b60448ee4f&oe=604AA5A6","caption":"Made this with some friends today. What? I was bored...\n#mudpuddle","timestamp":1461438817,"handle":"yinforthewin"}]).map(el=>""+el.timestamp))
 })
+app.get('/get-posts-unity', bodyParser.json(), async (req, res) => {
+  const username = req.query.username
+  const password = req.query.password
+  let verified = false
+  let uid="NONE"
+  db.ref("accounts").orderByChild('Instagram/password').equalTo(''+password).on("child_added", function(snapshot) {
+    verified=true;
+  })
+  db.ref("accounts").orderByChild('Instagram/username').equalTo(''+username).on("child_added", function(snapshot) {
+    if(verified)
+    uid=snapshot.key
+  })
+  if(uid!="NONE"){
+    db.ref('accounts').child(uid).child('Instagram').once('value',async (snap)=>{
+      const { username, password, following } = snap.val()
+      let client = new Instagram({ username, password });
+      const log = await client.login()
+      console.log(log)
+      if(!log.authenticated)
+          return res.json({e:"password failed (maybe it changed? try reseting your insta account)"})
+      const userId = log.userId
+      let arr = []
+      for(let handle in following)
+          if(following[handle]){
+              const posts = await client.getPhotosByUsername({ username: handle, /*first:1*/ })
+              for(let post of posts.user.edge_owner_to_timeline_media.edges){
+                  const displayUrl = post?.node?.display_url
+                  const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
+                  const timestamp = post?.node?.taken_at_timestamp
+                  const video = post?.node?.video_url
+                  const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video, handle}
+                  arr.push(obj)
+              }
+          }
+      arr = arr.sort((a,b)=>b.timestamp-a.timestamp)
+      return res.json(arr)
+  }).catch(e=>res.json(e))
+  }
+});
 
 const port = process.env.PORT || 4242
 app.listen(port, () => console.log(`Running on port ${port}`));
