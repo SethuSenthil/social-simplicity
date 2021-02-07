@@ -31,6 +31,14 @@ app.get('/signin', async function (req, res) {
     res.render('login', { DOMAIN, platform:"insta"})
 })
 
+app.get('/login', async function (req, res) {
+    res.render('mainsitelogin', { DOMAIN })
+})
+
+app.get('/profile', async function (req, res) {
+    res.render('profile', { DOMAIN })
+})
+
 app.get('/following', async function (req, res) {
     const uid = req.query.uid
     const client = new Instagram({ username, password });
