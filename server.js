@@ -58,13 +58,22 @@ Disc.onMessage([{
 //   sendDM(newPost.discID)
 // });
 
-setInterval(function(){ 
+setTimeout(function(){ 
   let lastUpdate = new Date(new Date().getTime()-5*60*1000)
   db.ref('accounts').once('value').then((snapshot)=>{
     snapshot.forEach(accountSnapshot=>{
       if(accountSnapshot.val().Instagram!=null){
-        console.log(accountSnapshot.val().Instagram)
-        
+        console.log(accountSnapshot.key)
+        try{
+          axios.post('http://localhost:4242/get-posts', {}, {params:{
+            uid: accountSnapshot.key
+          }}).then(res=>{
+  
+          })
+        }
+        catch(err){
+          
+        }
       }
     })
   })
