@@ -226,21 +226,11 @@ app.post('/get-posts', bodyParser.json(), async (req, res) => {
                 //console.log(posts.user.edge_owner_to_timeline_media.page_info)
                 //console.log(JSON.stringify(posts.user.edge_owner_to_timeline_media.edges[0].node))
                 for(let post of posts.user.edge_owner_to_timeline_media.edges){
-<<<<<<< HEAD
                     const displayUrl = post?.node?.display_url
                     const caption = post?.node?.edge_media_to_caption?.edges?.[0]?.node?.text
                     const timestamp = post?.node?.taken_at_timestamp
                     const video = post?.node?.video_url
-                    const obj = {displayUrl,caption,timestamp,video}
-=======
-                    const displayUrl = post.node.display_url
-                    let caption="No caption"
-                    if(post.node.edge_media_to_caption.edges[0]!=null)
-                    caption = post.node.edge_media_to_caption.edges[0].node.text
-                    const timestamp = post.node.taken_at_timestamp
-                    const video = post.node.video_url
-                    const obj = {displayUrl,caption,timestamp,video, handle}
->>>>>>> ffe48e2e5eb94168eb5ae7c5f149baa1706e6eb9
+                    const obj = {displayUrl,caption:caption?caption:"No caption",timestamp,video}
                     arr.push(obj)
                 }
             }
