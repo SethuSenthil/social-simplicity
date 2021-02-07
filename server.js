@@ -50,9 +50,6 @@ Disc.onMessage([{
     msg.author.send(embed)
     msg.channel.send("Sent you a DM!")
   }
-<<<<<<< HEAD
-}])
-=======
 },{
     cmd: "about",
     desc: "Sends you a link to our homepage",
@@ -76,7 +73,6 @@ Disc.onMessage([{
     }
 }
 ])
->>>>>>> 56af23b83f84f30e8b451ed54f9cefcb8863182e
 
 // db.ref("accounts").on("child_added", function(snapshot, prevChildKey) {
 //   var newPost = snapshot.val().Instagram;
