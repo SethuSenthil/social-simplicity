@@ -10,7 +10,7 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.8.0/css/font-awesome.min.css">
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="vendor/animate/animate.css">
     <!--===============================================================================================-->
@@ -46,13 +46,13 @@
             display: block;
             margin: 0;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+            width: 30px;
+            height: 30px;
+            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.2);
             box-shadow: none;
             outline: none;
-            opacity: 0;
-            transform: scale(1);
+            opacity: 20;
+            transform: scale(3);
             pointer-events: none;
             transition: opacity 0.3s, transform 0.2s;
         }
@@ -60,7 +60,7 @@
         /* Span */
         .pure-material-checkbox>span {
             display: inline-block;
-            width: 100%;
+            width: 150%;  /* Temp Fix for Width */
             cursor: pointer;
         }
 
@@ -83,14 +83,14 @@
         /* Checkmark */
         .pure-material-checkbox>span::after {
             content: "";
-            display: block;
+            display: none;
             position: absolute;
             top: 3px;
-            left: 1px;
+            left: 30px;
             width: 10px;
             height: 5px;
             border: solid 2px transparent;
-            border-right: none;
+            border-right: 3px;
             border-top: none;
             transform: translate(3px, 4px) rotate(-45deg);
         }
@@ -138,17 +138,16 @@
         }
 
         .pure-material-checkbox>input:active+span::before {
-            border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+            border-color: rgb(var(--pure-material-primary-rgb, 33, 150, 324));
         }
 
         .pure-material-checkbox>input:checked:active+span::before {
             border-color: transparent;
-            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.6);
+            background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.9);
         }
 
-        /* Disabled */
         .pure-material-checkbox>input:disabled {
-            opacity: 0;
+            opacity: 10;
         }
 
         .pure-material-checkbox>input:disabled+span {
@@ -160,7 +159,7 @@
             border-color: currentColor;
         }
 
-        .pure-material-checkbox>input:checked:disabled+span::before,
+        .div-pure-material-checkbox>input:checked:disabled+span::before,
         .pure-material-checkbox>input:indeterminate:disabled+span::before {
             border-color: transparent;
             background-color: currentColor;
